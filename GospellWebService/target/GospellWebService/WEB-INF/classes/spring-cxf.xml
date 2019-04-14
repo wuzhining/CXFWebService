@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    
+    <!--  Cxf WebService 服务端 -->
+    <jaxws:endpoint id="MesWebService" implementor="#mesWebServiceImpl" address="/MesWebService"/>
+    <!-- <jaxws:endpoint id="ScadaRsenseWebService" implementor="com.mes.web.webservice.impl.ScadaRsenseWebServiceImpl" address="/scadaRsenseService"/>
+     -->
+    <!--  Cxf WebService 客户端
+    <jaxws:client id="demoClient" serviceClass="com.mes.web.webservice.DemoWebService" address="http://localhost:8080/mes/services/demo?wsdl" /> -->
+    
+</beans>
