@@ -32,9 +32,46 @@ public class WPrintBarcodeService {
 		List<Object> list = new ArrayList<>();
 		try {
 			list.add(mac);
-			list.add(worksta);
 			DBHelper db = new DBHelper();
-			String sql = "";
+			String originCd = "";
+
+			String sql = "select cd,mac from w_print_barcode where mac=?";
+			barcodeList = (List<WPrintBarcode>) db.executeQuery(sql, list, new WPrintBarcode().getClass());
+			if (barcodeList.size() == 0) {
+				System.out.println("mac地址：" + mac + " 不存在！");
+				return "mac地址：" + mac + " 不存在！";
+			}
+			originCd = barcodeList.get(0).getCd();
+
+			if (!worksta.equals(originCd)) {
+				sql = "select t1.group_next as cd,t1.step_no as step_no from iplant1.c_route_control_t t1 where t1.group_code = ?";
+				list.clear();
+				list.add(originCd);
+				stepList = (List<TempWPrintBarcode>) db.executeQuery(sql, list, new TempWPrintBarcode().getClass());
+				if (stepList.size() > 0) {
+					String step = "";
+					switch (stepList.get(0).getStepNo().toString()) {
+					case "1":
+						step = "写号";
+						break;
+					case "2":
+						step = "bob测试";
+						break;
+					case "3":
+						step = "打流测试";
+						break;
+					case "4":
+						step = "查号测试";
+						break;
+
+					default:
+						break;
+					}
+					System.out.println("mac地址：" + mac + " 目前处于" + step + "工位");
+					return "mac地址：" + mac + " 目前处于" + step + "工位";
+				}
+			}
+
 			sql = "select t1.group_next as cd,t1.STEP_NO as step_no from IPLANT1.C_ROUTE_CONTROL_T T1  where t1.route_code=("
 					+ "select route_code from mes1.r_mes_mo_t where mo_cd =("
 					+ "select mo_no from MES1.R_MES_MO_MAC_T where MAC_CODE = ?)) and t1.group_code = ?";
@@ -42,46 +79,48 @@ public class WPrintBarcodeService {
 
 			if (stepList.size() == 0) {
 				// 查找不到工位下一站的信息，
-				System.out.println( "查找不到工位:" + worksta + "下一站的信息！");
-				return "NODATA";
+				System.out.println("查找不到工位:" + worksta + "下一站的信息！");
+				return "查找不到工位:" + worksta + "下一站的信息！";
 			}
 
-			// String nextWorkStation = stepList.get(0).getCd();
 			String step = stepList.get(0).getStepNo().toString();
+			String message = "";
 			switch (step) {
-			case "1":// 烧录
+			case "1":// 烧录、写号
 				sql = "select pcbsn,pnsn,mac from w_print_barcode where (flag is null or flag='0')and mac=? and cd=?";
+				message="mac绑定";
 				break;
 			case "2":// bob测试
 				sql = "select pcbsn,pnsn,mac from w_print_barcode where (bob_result is null or bob_result='0') and "
 						+ "flag='1' and mac=? and cd=?";
+				message = "写号";
 				break;
 			case "3":// 打流测试
 				sql = "select pcbsn,pnsn,mac from w_print_barcode where (wander_result is null or wander_result='0')"
 						+ "and bob_result='1' and mac=? and cd=?";
+				message = "bob测试";
 				break;
 			case "4":// 查号测试
 				sql = "select pcbsn,pnsn,mac from w_print_barcode where (check_result is null or check_result='0')"
 						+ "and wander_result='1' and mac=? and cd=?";
+				message = "打流测试";
 				break;
 			}
-			// sql = "select pcbsn,pnsn,mac from w_print_barcode where (flag is
-			// null or flag='0')and mac=? and cd=?";
 			barcodeList = (List<WPrintBarcode>) db.executeQuery(sql, list, new WPrintBarcode().getClass());
 
 			if (barcodeList.size() == 0) {
-				return "NODATA";
+					return "mac：" + mac + "未通过" + message;
 			}
 
-			if (step.equals("1")) {
+			if (step.equals("3")) {
+				return "SUCCESS";
+			} else {
 				JSONObject jobj = new JSONObject();
 				jobj.put("pcbsn", barcodeList.get(0).getPcbsn());
 				jobj.put("pnsn", barcodeList.get(0).getPnsn());
 				jobj.put("mac", barcodeList.get(0).getMac());
 
 				return jobj.toString();
-			} else {
-				return "SUCCESS";
 			}
 
 		} catch (Exception e) {
@@ -111,16 +150,55 @@ public class WPrintBarcodeService {
 	 */
 	@SuppressWarnings("unchecked")
 	public String updateResult(String worksta, String mac, int flag) {
-		List<Object> list = new ArrayList<Object>();
+		List<WPrintBarcode> barcodeList;
+		List<TempWPrintBarcode> stepList;
+		List<Object> list = new ArrayList<>();
 
 		try {
 
 			DBHelper db = new DBHelper();
-			String sql;
-			List<WPrintBarcode> cdList;
-			List<TempWPrintBarcode> stepList;
 
+			String originCd = "";
+			list.add(mac);
+			String sql = "select cd,mac from w_print_barcode where mac=?";
+			barcodeList = (List<WPrintBarcode>) db.executeQuery(sql, list, new WPrintBarcode().getClass());
+			if (barcodeList.size() == 0) {
+				System.out.println("mac地址：" + mac + " 不存在！");
+				return "mac地址：" + mac + " 不存在！";
+			}
+			originCd = barcodeList.get(0).getCd();
+
+			if (!worksta.equals(originCd)) {
+				sql = "select t1.group_next as cd,t1.step_no as step_no from iplant1.c_route_control_t t1 where t1.group_code = ?";
+				list.clear();
+				list.add(originCd);
+				stepList = (List<TempWPrintBarcode>) db.executeQuery(sql, list, new TempWPrintBarcode().getClass());
+				if (stepList.size() > 0) {
+					String step = "";
+					switch (stepList.get(0).getStepNo().toString()) {
+					case "1":
+						step = "写号";
+						break;
+					case "2":
+						step = "bob测试";
+						break;
+					case "3":
+						step = "打流测试";
+						break;
+					case "4":
+						step = "查号测试";
+						break;
+
+					default:
+						break;
+					}
+					System.out.println("mac地址：" + mac + " 目前处于" + step + "工位");
+					return "mac地址：" + mac + " 目前处于" + step + "工位";
+				}
+			}
+			
 			// 查找工位信息
+			list.clear();
 			list.add(mac);
 			list.add(worksta);
 
@@ -132,18 +210,12 @@ public class WPrintBarcodeService {
 			if (stepList.size() == 0) {
 				// 查找不到工位下一站的信息，
 				System.out.println("查找不到工位:" + worksta + "下一站的信息！");
-				return "NODATA";
+				return "查找不到工位:" + worksta + "下一站的信息！";
 			}
 
 			String nextWorkStation = stepList.get(0).getCd();
 
 			String method = stepList.get(0).getStepNo().toString();
-			sql = "select mac,cd,flag from w_print_barcode where mac=? and cd=?";
-			cdList = (List<WPrintBarcode>) db.executeQuery(sql, list, new WPrintBarcode().getClass());
-			if (cdList.size() == 0) {
-				System.out.println("工位：" + worksta + "中查找不到mac:" + mac + "的数据信息！");
-				return "NODATA";
-			}
 
 			if (flag == 1) {// 成功
 				// 更新状态，添加过站信息
