@@ -160,7 +160,7 @@ public class WPrintBarcodeService {
 
 			String originCd = "";
 			list.add(mac);
-			String sql = "select cd,mac from w_print_barcode where mac=?";
+			String sql = "select cd,mac,pcbsn,pnsn from w_print_barcode where mac=?";
 			barcodeList = (List<WPrintBarcode>) db.executeQuery(sql, list, new WPrintBarcode().getClass());
 			if (barcodeList.size() == 0) {
 				System.out.println("mac地址：" + mac + " 不存在！");
@@ -246,23 +246,41 @@ public class WPrintBarcodeService {
 				list.add(flag);
 				list.add(mac);
 				list.add(worksta);
-
+				
+				String step="";
+				
 				switch (method) {
 				case "1":// 烧录
 					sql = "update w_print_barcode set flag=? where mac=? and cd=? and flag is null";
+					step="写号不良";
 					break;
 				case "2":// bob测试
 					sql = "update w_print_barcode set bob_result=? where mac=? and cd=? and bob_result is null";
+					step="bob测试不良";
 					break;
 				case "3":// 打流测试
 					sql = "update w_print_barcode set wander_result=? where mac=? and cd=? and wander_result is null";
+					step="打流测试不良";
 					break;
 				case "4":// 查号测试
 					sql = "update w_print_barcode set check_result=? where mac=? and cd=? and check_result is null";
+					step="查号不良";
 					break;
 				}
 				db.excuteUpdate(sql, list);
+				
+				//添加不良品信息
+				list.clear();
+				list.add(barcodeList.get(0).getPcbsn());
+				list.add(barcodeList.get(0).getPnsn());
+				list.add("组装段不良");
+				list.add(step);
+				
+				sql="INSERT INTO MES1.R_MES_ASSE_BAD_INPUT_T (PCB_SN,PON_SN,BAD_TYPE,BAD_NM,SEQ_ID,CRT_DT) "
+						+ "VALUES(?,?,?,?,BAD_SEQ.NEXTVAL,SYSDATE)";
+				db.excuteUpdate(sql, list);
 			}
+			
 			// 更新其他信息
 			list.clear();
 			list.add(flag);
