@@ -2,9 +2,11 @@ E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\service\WPrin
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\dao\WPrintBarcodeDaoImpl.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\pojo\BarcodeErrorMsg.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\webservice\MesWebService.java
+E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\pojo\JsonResult.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\pojo\WPrintBarcode.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\service\WPrintBarcodeService.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\utils\DBHelper.java
+E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\pojo\ResultMessage.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\webservice\impl\MesWebServiceImpl.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\pojo\TempWPrintBarcode.java
 E:\share\GospellWebService\GospellWebService\src\main\java\com\mes\dao\WPrintBarcodeDao.java

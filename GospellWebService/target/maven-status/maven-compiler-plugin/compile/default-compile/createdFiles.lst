@@ -1,7 +1,9 @@
+com\mes\pojo\JsonResult.class
 com\mes\pojo\WPrintBarcode.class
 com\mes\pojo\TempWPrintBarcode.class
 com\mes\utils\DBHelper.class
 com\mes\pojo\BarcodeErrorMsg.class
+com\mes\pojo\ResultMessage.class
 com\mes\webservice\impl\MesWebServiceImpl.class
 com\mes\webservice\MesWebService.class
 com\mes\dao\WPrintBarcodeDaoImpl.class

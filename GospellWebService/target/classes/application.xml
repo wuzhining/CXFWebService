@@ -18,13 +18,27 @@
 		<property name="password" value="${jdbc.password}" />
 		<property name="jdbcUrl" value="${jdbc.url}" />
 		<property name="driverClass" value="${jdbc.driverClassName}" />
+		
+		<!-- initialPoolSize：初始化连接数 -->
 		<property name="initialPoolSize" value="${initialPoolSize}" />
+		
+		<!-- minPoolSize：连接池中保留的最小连接数，默认为：3 -->
 		<property name="minPoolSize" value="${minPoolSize}" />
+		
+		<!-- maxPoolSize：连接池中保留的最大连接数。默认值: 15 -->
 		<property name="maxPoolSize" value="${maxPoolSize}" />
+		
+		<!-- acquireIncrement：当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
 		<property name="acquireIncrement" value="${acquireIncrement}" />
+		
+		<!-- acquireIncrement：c3p0全局的PreparedStatements缓存的大小。如果maxStatements与
+		maxStatementsPerConnection均为0，则缓存不生效，只要有一个不为0，则语句的缓存就能生效。默认值: 0 -->
 		<property name="maxStatements" value="${maxStatements}" />
-		<property name="maxStatementsPerConnection"
-			value="${maxStatementsPerConnection}" />
+		<property name="maxStatementsPerConnection" value="${maxStatementsPerConnection}" />
+		
+		<!-- maxIdleTime：最大空闲时间，多少秒内未使用则连接被丢弃。若为0则永不丢弃。默认值: 0 
+		-->
+		<property name="maxIdleTime" value="${maxIdleTime}" />
 	</bean>
 
 	<bean id="template"
